@@ -14,7 +14,7 @@ create table role (
 roleid int auto_increment not null,
 primary key (roleid),
 title varchar(30),
-salary decimal(10, 4),
+salary decimal(10, 2),
 departmentfk int,
 foreign key (departmentfk) references department (departmentid)
 );

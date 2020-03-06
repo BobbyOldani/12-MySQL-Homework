@@ -1,6 +1,10 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
+const Employee = require("./employee");
+const Department = require("./department");
+const Role = require("./role");
+const Query = require("./query");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -64,6 +68,20 @@ function viewByDepartment() {
     })
     .then(function(answer) {
       console.log(answer);
+      switch (answer.department) {
+        case "Sales":
+          Query.salesQuery();
+          break;
+        case "Engineering":
+          // engineeringQuery();
+          break;
+        case "Finance":
+          // financeQuery();
+          break;
+        case "Legal":
+          // legalQuery();
+          break;
+      }
     });
 }
 
@@ -85,43 +103,62 @@ function viewByRole() {
     })
     .then(function(answer) {
       console.log(answer);
+      switch (answer.role) {
+        case "Sales Lead":
+          // salesLeadQuery();
+          break;
+        case "Sales Person":
+          // salesPersonQuery();
+          break;
+        case "Lead Engineer":
+          // leadEngineerQuery();
+          break;
+        case "Software Engineer":
+          // softwareEngineerQuery();
+          break;
+        case "Accountant":
+          // accountantQuery();
+          break;
+        case "Legal Team Lead":
+          // legalTeamLeadQuery();
+          break;
+        case "Lawyer":
+          // lawyerQuery();
+          break;
+      }
     });
 }
 
 function addEmployee() {
   inquirer
-    .prompt({
-      name: "firstname",
-      type: "input",
-      message: "What is the first name?"
-    })
+    .prompt(
+      [{
+        name: "firstname",
+        type: "input",
+        message: "What is the first name?"
+      },
+      {
+        name: "lastname",
+        type: "input",
+        message: "What is your last name?"
+      },
+      {
+        name: "role",
+        type: "list",
+        message: "What is this Employees role?",
+        choices: [
+          "Sales Lead",
+          "Sales Person",
+          "Lead Engineer",
+          "Software Engineer",
+          "Accountant",
+          "Legal Team Lead",
+          "Lawyer"
+        ]
+      }]
+    )
     .then(function(answer) {
       console.log(answer);
-      inquirer
-        .prompt({
-          name: "lastname",
-          type: "input",
-          message: "What is your last name?"
-        })
-        .then(function(answer) {
-          inquirer.prompt({
-            name: "role",
-            type: "list",
-            message: "What is this Employees role?",
-            choices: [
-              "Sales Lead",
-              "Sales Person",
-              "Lead Engineer",
-              "Software Engineer",
-              "Accountant",
-              "Legal Team Lead",
-              "Lawyer"
-            ]
-          })
-          .then(function(answer) {
-            console.log(answer);
-          })
-        });
     });
 }
 
