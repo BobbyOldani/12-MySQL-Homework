@@ -1,0 +1,20 @@
+{
+  "name": "12-mysql-homework",
+  "version": "1.0.0",
+  "description": "Server.js requirements",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BobbyOldani/12-MySQL-Homework.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BobbyOldani/12-MySQL-Homework/issues"
+  },
+  "homepage": "https://github.com/BobbyOldani/12-MySQL-Homework#readme"
+}

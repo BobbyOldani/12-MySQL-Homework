@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-const Employee = require("./employee");
 const Department = require("./department");
 const Role = require("./role");
 const Query = require("./query");
@@ -10,7 +9,7 @@ const connection = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "",
+  password: "cllz1494",
   database: "employee_db"
 });
 
@@ -30,7 +29,8 @@ function runSearch() {
         "View employees by department",
         "View employees by role",
         "Add employee to database",
-        "Update employee role"
+        "Update employee role",
+        "Exit"
       ]
     })
     .then(function(answer) {
@@ -50,14 +50,45 @@ function runSearch() {
         case "Update employee role":
           updateRole();
           break;
+        case "Exit":
+          connection.end();
+          break;
       }
     });
 }
 
-// function viewEmployees() {
+//////////////////////////////////////////////////////////////////////////////
 
-// };
+function viewEmployees() {
+  connection.query("SELECT e.id, e.first_name, e.last_name, r.title, r.salary, d.name FROM employee as e INNER JOIN role as r on e.rolefk = r.roleid INNER JOIN department as d on r.departmentfk = d.departmentid", function(err, result) {
+    console.log(result);
+    console.table(result);
+    nextQuestion();
+  });
+}
 
+function depQuery(answer) {
+  console.log(answer.department)
+  let query = `SELECT e.id, e.first_name, e.last_name, d.name FROM employee as e INNER JOIN role as r ON e.rolefk = r.roleid INNER JOIN department as d WHERE r.departmentfk = d.departmentid AND d.name = "${answer.department}"`;
+  connection.query(query, function(err, results) {
+    if (err) throw err;
+    console.log(results);
+    console.table(results);
+    nextQuestion();
+  });
+}
+
+function roleQuery(answer) {
+  console.log(answer.role)
+  let query = `SELECT e.id, e.first_name, e.last_name, r.title FROM employee as e LEFT JOIN role as r ON e.rolefk = r.roleid WHERE r.title = "${answer.role}"`;
+  connection.query(query, function(err, results) {
+    if (err) throw err;
+    console.table(results);
+    nextQuestion();   
+  })
+}
+
+//////////////////////////////////////////////////////////////////////////////
 function viewByDepartment() {
   inquirer
     .prompt({
@@ -68,20 +99,7 @@ function viewByDepartment() {
     })
     .then(function(answer) {
       console.log(answer);
-      switch (answer.department) {
-        case "Sales":
-          Query.salesQuery();
-          break;
-        case "Engineering":
-          // engineeringQuery();
-          break;
-        case "Finance":
-          // financeQuery();
-          break;
-        case "Legal":
-          // legalQuery();
-          break;
-      }
+     depQuery(answer);
     });
 }
 
@@ -103,36 +121,14 @@ function viewByRole() {
     })
     .then(function(answer) {
       console.log(answer);
-      switch (answer.role) {
-        case "Sales Lead":
-          // salesLeadQuery();
-          break;
-        case "Sales Person":
-          // salesPersonQuery();
-          break;
-        case "Lead Engineer":
-          // leadEngineerQuery();
-          break;
-        case "Software Engineer":
-          // softwareEngineerQuery();
-          break;
-        case "Accountant":
-          // accountantQuery();
-          break;
-        case "Legal Team Lead":
-          // legalTeamLeadQuery();
-          break;
-        case "Lawyer":
-          // lawyerQuery();
-          break;
-      }
+      roleQuery(answer);
     });
 }
 
 function addEmployee() {
   inquirer
-    .prompt(
-      [{
+    .prompt([
+      {
         name: "firstname",
         type: "input",
         message: "What is the first name?"
@@ -155,13 +151,67 @@ function addEmployee() {
           "Legal Team Lead",
           "Lawyer"
         ]
-      }]
-    )
+      }
+    ])
     .then(function(answer) {
       console.log(answer);
+      empRoleSearch(answer);
     });
 }
 
 // function updateRole() {
 
 // };
+
+
+function empRoleSearch(employee) {
+  var roleid;
+  connection.query(
+    "SELECT roleid FROM role WHERE title = ?",
+    employee.role,
+    function(err, result) {
+      roleid = result[0].roleid;
+      console.log(roleid);
+      addEmp(employee, roleid);
+    }
+  );
+  
+}
+
+function addEmp(employee, roleid) {
+connection.query(
+    "INSERT INTO employee SET ?",
+    {
+      first_name: employee.firstname,
+      last_name: employee.lastname,
+      rolefk: roleid
+    },
+    function(err) {
+      if (err) throw err;
+      console.log("This is employee: " + employee);
+      console.log("New employee successfully added to database!");
+      nextQuestion();
+    }
+  );
+}
+
+function nextQuestion() {
+  inquirer
+    .prompt({
+      name: "next",
+      type: "list",
+      message: "What would you like to do next?",
+      choices: ["Main Menu", "Exit"]
+    })
+    .then(function(answer) {
+      switch (answer.next) {
+        case "Main Menu":
+          runSearch();
+          break;
+        case "Exit":
+          connection.end();
+          break;
+      }
+    });
+}
+
