@@ -1,10 +1,10 @@
 {
   "name": "12-mysql-homework",
   "version": "1.0.0",
-  "description": "Server.js requirements",
+  "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "test",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "repository": {
@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/BobbyOldani/12-MySQL-Homework/issues"
   },
-  "homepage": "https://github.com/BobbyOldani/12-MySQL-Homework#readme"
+  "homepage": "https://github.com/BobbyOldani/12-MySQL-Homework#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.1.0",
+    "mysql": "^2.18.1"
+  }
 }
