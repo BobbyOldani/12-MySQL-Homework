@@ -195,12 +195,10 @@ function updateRole() {
                 choices: roleArr
               }
             ]).then(function (answer2) {
-              console.log("198" + answer2.what);
-              console.log(answer.who);
               connection.query("UPDATE employee SET rolefk = ? WHERE id = ?", [answer2.what, answer.who], function(err, result) {
                 if (err) throw err
-                console.log("201" + result);
               })
+              console.log("Employee Role Updated");
               nextQuestion();
             })
           });
